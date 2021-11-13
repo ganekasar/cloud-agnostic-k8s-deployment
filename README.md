@@ -64,9 +64,9 @@ Step 3.8: Clean up workspace ==>
 
 Prerequisites:
 1. An google cloud account
-2. A configured Azure CLI (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
-3. kubectl (https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-4. Terraform CLI (https://learn.hashicorp.com/tutorials/terraform/install-cli)
+2. kubectl (https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+3. Terraform CLI (https://learn.hashicorp.com/tutorials/terraform/install-cli)
+4. Having Kubernetes Engine API enabled.
 
 Step 4.1: Change the active directory ==> 
           cd gcp_gke
