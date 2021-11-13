@@ -59,4 +59,31 @@ Step 3.7: Access Kubernetes Dashboard ==>
 
 Step 3.8: Clean up workspace ==>
           terraform destroy
+
+**Google Cloud GKE:**
+
+Prerequisites:
+1. An google cloud account
+2. A configured Azure CLI (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
+3. kubectl (https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+4. Terraform CLI (https://learn.hashicorp.com/tutorials/terraform/install-cli)
+
+Step 4.1: Change the active directory ==> 
+          cd gcp_gke
+          
+Step 4.2: Update your variables.tf file ==>
+          _Replace varibales in variables.tf with the appropriate values and set path for the credentials file in main.tf file
+
+Step 4.3: Initialize Terraform ==>
+          terraform init
+
+Step 4.4: Provision the GKE cluster ==>
+          terraform apply
+
+Step 4.6: Inspect the cluster pods using the generated kubeconfig file ==>
+          kubectl get pods --all-namespaces --kubeconfig=kubeconfig-prod
+
+Step 4.7: Clean up workspace ==>
+          terraform destroy
      
+
