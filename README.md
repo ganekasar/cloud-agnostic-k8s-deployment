@@ -27,5 +27,36 @@ Step 2.4: Configure Kubectl ==>
  
 Step 2.5: Destroy the workspace ==>
           terrafrom destroy
+
+**Azure AKS:**
+
+Prerequisites:
+1. an Azure Account
+2. a configured Azure CLI (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
+3. kubectl (https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+4. Terraform CLI (https://learn.hashicorp.com/tutorials/terraform/install-cli)
+
+Step 3.1: Change the active directory ==> 
+          cd azure_aks/terraform-aks-cluster
           
-          
+Step 3.2: Create an Active Directory service principal account ==>
+          az ad sp create-for-rbac --skip-assignment
+
+Step 3.3: Update your terraform.tfvars file ==>
+          _Replace appID and password in terraform.tfvars with the appID and password obtainted after previous command_
+
+Step 3.4: Initialize Terraform ==>
+          terraform init
+
+Step 3.5: Provision the AKS cluster ==>
+          terraform apply
+
+Step 3.6: Configure Kubectl ==>
+          az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
+
+Step 3.7: Access Kubernetes Dashboard ==>
+          az aks browse --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
+
+Step 3.8: Clean up workspace ==>
+          terraform destroy
+     
