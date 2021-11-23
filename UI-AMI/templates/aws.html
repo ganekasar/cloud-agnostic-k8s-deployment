@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- Bootstrap CSS -->
+       <link rel="stylesheet" href=
+            "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+            <script src=
+            "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+            </script>
+            <script src=
+            "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
+            </script>
+            <script src=
+            "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
+            </script>
+
+            <!-- CDN link used below is compatible with this example -->
+            <link rel="stylesheet" href=
+                "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+                <script src=
+                "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js">
+                </script>
+        <title>AMI automation</title>
+    </head>
+    <body>
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="/">AMI</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ url_for('aws') }}">aws <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('aws') }}">Azure</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('aws') }}">GCP</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="jumbotron">
+                <form action="/aws" method="POST" enctype="multipart/form-data">
+                    <!-- <div class="form-group">
+                        <label for="vmname">Virtual Machine Name</label>
+                        <input  type="text" class="form-control" id="vmname" name="vmname" placeholder="Enter Virtual Machine Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="user">User name for instance</label>
+                        <input type="text" class="form-control" id="user" name="user" placeholder="Username for given Instance">
+                    </div>
+                    <div class="form-group">
+                        <label for="Password">Password</label>
+                        <input type="Password" class="form-control" id="Password" name="Password" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <label for="region">Instance region</label>
+                        <input  type="text" class="form-control" id="region" name="region" placeholder="region">
+                    </div>
+                    <div class="form-group">
+                        <label for="scidr">Subnet cidr block</label>
+                        <input  type="text" class="form-control" id="scidr"  name="scidr" placeholder="10.0.0.0/16" >
+                    </div>
+                    <div class="form-group">
+                        <label for="vcidr">vpc cidr block </label>
+                        <input  type="text" class="form-control" id="vcidr" name="vcidr" placeholder="10.0.10.0/24">
+                    </div>
+                    <div class="form-group">
+                        <label for="os">Choose Operating System</label>
+                        <select class="custom-select mr-sm-2" id="os" name="os">
+                            <option selected>Choose Operating System</option>
+                            <option value="1">Window</option>
+                            <option value="2">ubuntu-Linux</option>
+                            <option value="3">Centos</option>
+                            <option value="4">Suse</option>
+                        </select>
+                    </div>-->
+                    <!-- <label> Choose Softwares to install</label>
+                    <select class="form-select" id='ansibleList' data-list='{{ ansibleList }}' multiple="multiple" name="software-list">
+                        <option selected>Open this select menu</option>
+                    </select> -->
+
+                    <div class="form-group">
+                        <label for="file">Choose aws Creadiantial file</label>
+                        <input type="file" class="form-control-file" id="file" name="file">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" name="AlreadyConfigured" type="checkbox" value="true" id="flexCheckDefault">
+                        <label class="form-check-label" for="flexCheckDefault">
+                          Check if you have configured already (No need to select configuration file if you have configured locally)
+                        </label>
+                    </div> <br/>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
