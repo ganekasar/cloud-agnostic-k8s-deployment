@@ -119,6 +119,10 @@ def aws_post():
 
 	return flask.Response( show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand), mimetype= MIME_TYPE )
 
+@app.route("/azurelogin",methods=['POST'])
+def azurelogin():
+	subprocess.run(['az', 'login'])
+
 @app.route("/azure",methods=['GET'])
 def azure():
 	return render_template("azure.html", title="Azure")
