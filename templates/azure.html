@@ -48,15 +48,7 @@
                 </div>
             </nav>
             <div class="jumbotron">
-                <form action="/azure" method="POST" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <select class="custom-select mr-sm-2" id="cred" name="cred">
-                            <option SELECTED value='0'>Choose available account</option>
-                            {% for x in credential %}
-                                <option value= '{{ x }}'>{{x}}</option>
-                            {% endfor %}
-                        </select>    
-                    </div>
+                <form action="/azure1" method="POST" enctype="multipart/form-data">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
