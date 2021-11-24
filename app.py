@@ -5,6 +5,7 @@ import json
 import re
 import flask
 from shelljob import proc
+import subprocess
 
 app = Flask(__name__)
 
@@ -17,6 +18,9 @@ def view_home():
 @app.route("/aws")
 def aws():
 	return render_template("aws.html", title="Aws")
+
+def run_command(cmd_line, command):
+	cmd_line.run(command)
 
 def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_proc,terraform_destroy_proc,applyCommand,destroyCommand):
 
@@ -117,59 +121,65 @@ def aws_post():
 
 @app.route("/azure",methods=['GET'])
 def azure():
-	data = json.loads(open("data/azure_images.json").read())
+	# data = json.loads(open("data/azure_images.json").read())
 
-	lines=[]
-	for i in data:
-		lines.append({ 'offer' : i['offer'] + i['sku'], 'urn' : i['urn']})
+	# lines=[]
+	# for i in data:
+	# 	lines.append({ 'offer' : i['offer'] + i['sku'], 'urn' : i['urn']})
 
 	credentials=[]
 	try:
-		data2 = json.loads(open("data/azure_credentials.json").read())
-		for i in data2['azure_credentials']:
-			credentials.append(i['client_id'])
+		data2 = json.loads(open("azure_credentials.json").read())
+		print(data2['clientId'])
+		credentials.append(data2['clientId'])
+		# for i in data2['clientId']:
+		# 	credentials.append(i['clientId'])
+		# 	print("In Loop" + credentials)
 	except:
-		print("Please provide azure_credentials.json")
+		print("GET = Please provide azure_credentials.json")
 
-	return render_template("azure.html", title="Azure",opt=lines,credential=credentials)
+	return render_template("azure.html", title="Azure", credential=credentials)
 
 @app.route("/azure", methods=['POST'])
 def azure_post():
 	directory = 'azure'
 
 	terraform_command_variables_and_value={}
+	print(request.form)
 	cred=request.form['cred']
+
+	print("Credentials" + cred)
 	
 	try:
-		data2 = json.loads(open("data/azure_credentials.json").read())
-		for i in data2['azure_credentials']:
-			if cred==i['client_id']:
+		print("Reading AZURE CREDENTIALS")
+		data2 = json.loads(open("azure_credentials.json").read())
+		print("Seccuess in reading file")
+		
+		subscriptionId = data2['subscriptionId'].replace(' ','')
+		clientId = data2['clientId'].replace(' ','')
+		clientSecret = data2['clientSecret'].replace(' ','')
+		tenantId = data2['tenantId'].replace(' ','')
 
-				subscription_id = i['subscription_id'].replace(' ','')
-				client_id = i['client_id'].replace(' ','')
-				client_secret = i['client_secret'].replace(' ','')
-				tenant_id = i['tenant_id'].replace(' ','')
+		terraform_command_variables_and_value['clientId'] = clientId
+		terraform_command_variables_and_value['clientSecret'] = clientSecret
+		terraform_command_variables_and_value['tenantId'] = tenantId
 
-				terraform_command_variables_and_value['client_id'] = client_id
-				terraform_command_variables_and_value['client_secret'] = client_secret
-				terraform_command_variables_and_value['tenant_id'] = tenant_id
+		content = '''
+			provider "azurerm" {{
+				features {{}}
+				subscriptionId   =  "{subscriptionId}"
+				clientId         =  "{clientId}"
+				clientSecret     =  "{clientSecret}"
+				tenantId         =  "{tenantId}"
+			}}
+		'''
+		str = content.format(subscriptionId =subscriptionId,tenantId=tenantId,clientId =clientId,clientSecret=clientSecret)
 
-				content = '''
-					provider "azurerm" {{
-						features {{}}
-						subscription_id   =  "{subscription_id}"
-						client_id         =  "{client_id}"
-						client_secret     =  "{client_secret}"
-						tenant_id         =  "{tenant_id}"
-					}}
-				'''
-				str = content.format(subscription_id =subscription_id,tenant_id=tenant_id,client_id =client_id,client_secret=client_secret)
-
-				os.chdir(directory)
-				provider_file = open('providers.tf','w')
-				provider_file.write(str)
-				provider_file.close()
-				os.chdir('..')
+		os.chdir(directory)
+		provider_file = open('providers.tf','w')
+		provider_file.write(str)
+		provider_file.close()
+		os.chdir('..')
 
 		applyCommand=generateApplyCommand(terraform_command_variables_and_value)
 		destroyCommand=generateApplyCommand(terraform_command_variables_and_value,"destroy")
@@ -179,6 +189,49 @@ def azure_post():
 	except:
 		print("Please provide azure_credentials.json")
 		return render_template('error.html')
+
+@app.route("/azure1",methods=['GET'])
+def azure1():
+	return render_template("azure1.html", title="Azure")
+
+@app.route("/azure1", methods=['POST'])
+def azure1_post():
+	directory = 'azure'
+
+	terraform_command_variables_and_value={}
+	
+	try:
+		result = subprocess.run(['az', 'ad', 'sp', 'create-for-rbac', '--skip-assignment'], stdout=subprocess.PIPE)
+
+		result_stdout = result.stdout
+		result_json = result_stdout.decode('utf8').replace("'", '"')
+		print(result_json)
+		
+		# Load the JSON to a Python list & dump it back out as formatted JSON
+		data = json.loads(result_json)
+		s = json.dumps(data, indent=4, sort_keys=True)
+		print(s)
+
+		print(data['appId'])
+		print(data['password'])
+
+		os.chdir(directory)
+		provider_file = open('terraform.tfvars', 'w')
+		str = 'appId = "' + data['appId'] + '"\n' + 'password = "' + data['password'] + '"'
+		print(str)
+		provider_file.write(str)
+		provider_file.close()
+		os.chdir('..')
+
+		applyCommand=generateApplyCommand(terraform_command_variables_and_value)
+		destroyCommand=generateApplyCommand(terraform_command_variables_and_value,"destroy")
+		print(applyCommand,destroyCommand)
+
+		return flask.Response(show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand), mimetype= MIME_TYPE )
+	except:
+		print("Please provide azure_credentials.json")
+		return render_template('error.html')
+
 
 @app.route("/gcp")
 def gcp():
