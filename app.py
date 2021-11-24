@@ -39,12 +39,12 @@ def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_pr
 			for proc, line in lines:
 				yield line
 
-		terraform_destroy_proc.run(destroyCommand)
+		# terraform_destroy_proc.run(destroyCommand)
 
-		while terraform_destroy_proc.is_pending():
-			lines = terraform_destroy_proc.readlines()
-			for proc, line in lines:
-				yield line
+		# while terraform_destroy_proc.is_pending():
+		# 	lines = terraform_destroy_proc.readlines()
+		# 	for proc, line in lines:
+		# 		yield line
 
 		os.chdir('..')
 
