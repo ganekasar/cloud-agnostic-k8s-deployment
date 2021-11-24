@@ -23,12 +23,12 @@
                 <script src=
                 "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js">
                 </script>
-        <title>AMI automation</title>
+        <title>AWS EKS</title>
     </head>
     <body>
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="/">AMI</a>
+                <a class="navbar-brand" href="/">AWS EKS</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
                 </button>
@@ -48,45 +48,6 @@
             </nav>
             <div class="jumbotron">
                 <form action="/aws" method="POST" enctype="multipart/form-data">
-                    <!-- <div class="form-group">
-                        <label for="vmname">Virtual Machine Name</label>
-                        <input  type="text" class="form-control" id="vmname" name="vmname" placeholder="Enter Virtual Machine Name">
-                    </div>
-                    <div class="form-group">
-                        <label for="user">User name for instance</label>
-                        <input type="text" class="form-control" id="user" name="user" placeholder="Username for given Instance">
-                    </div>
-                    <div class="form-group">
-                        <label for="Password">Password</label>
-                        <input type="Password" class="form-control" id="Password" name="Password" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                        <label for="region">Instance region</label>
-                        <input  type="text" class="form-control" id="region" name="region" placeholder="region">
-                    </div>
-                    <div class="form-group">
-                        <label for="scidr">Subnet cidr block</label>
-                        <input  type="text" class="form-control" id="scidr"  name="scidr" placeholder="10.0.0.0/16" >
-                    </div>
-                    <div class="form-group">
-                        <label for="vcidr">vpc cidr block </label>
-                        <input  type="text" class="form-control" id="vcidr" name="vcidr" placeholder="10.0.10.0/24">
-                    </div>
-                    <div class="form-group">
-                        <label for="os">Choose Operating System</label>
-                        <select class="custom-select mr-sm-2" id="os" name="os">
-                            <option selected>Choose Operating System</option>
-                            <option value="1">Window</option>
-                            <option value="2">ubuntu-Linux</option>
-                            <option value="3">Centos</option>
-                            <option value="4">Suse</option>
-                        </select>
-                    </div>-->
-                    <!-- <label> Choose Softwares to install</label>
-                    <select class="form-select" id='ansibleList' data-list='{{ ansibleList }}' multiple="multiple" name="software-list">
-                        <option selected>Open this select menu</option>
-                    </select> -->
-
                     <div class="form-group">
                         <label for="file">Choose aws Creadiantial file</label>
                         <input type="file" class="form-control-file" id="file" name="file">
