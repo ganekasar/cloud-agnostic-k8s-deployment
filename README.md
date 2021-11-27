@@ -26,57 +26,45 @@ Step 2.5: Destroy the workspace &emsp;```terrafrom destroy```
 **Azure AKS:**
 
 Prerequisites:
-1. an Azure Account
-2. a configured Azure CLI (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
-3. kubectl (https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-4. Terraform CLI (https://learn.hashicorp.com/tutorials/terraform/install-cli)
+1. *an Azure Account*
+2. *[a configured Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)*
+3. [*kubectl*](https://kubernetes.io/docs/tasks/tools/install-kubectl/) 
+4. [*Terraform CLI*](https://learn.hashicorp.com/tutorials/terraform/install-cli) 
 
-Step 3.1: Change the active directory ==> 
-          cd azure_aks/terraform-aks-cluster
+Step 3.1: Change the active directory  &emsp ``cd azure_aks/terraform-aks-cluster``
           
-Step 3.2: Create an Active Directory service principal account ==>
-          az ad sp create-for-rbac --skip-assignment
+Step 3.2: Create an Active Directory service principal account  &emsp ``az ad sp create-for-rbac --skip-assignment``
 
-Step 3.3: Update your terraform.tfvars file ==>
+Step 3.3: Update your terraform.tfvars file 
           _Replace appID and password in terraform.tfvars with the appID and password obtainted after previous command_
 
-Step 3.4: Initialize Terraform ==>
-          terraform init
+Step 3.4: Initialize Terraform  &emsp ``terraform init``
 
-Step 3.5: Provision the AKS cluster ==>
-          terraform apply
+Step 3.5: Provision the AKS cluster  &emsp ``terraform apply``
 
-Step 3.6: Configure Kubectl ==>
-          az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
+Step 3.6: Configure Kubectl  &emsp ``az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)``
 
-Step 3.7: Access Kubernetes Dashboard ==>
-          az aks browse --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
+Step 3.7: Access Kubernetes Dashboard  &emsp ``az aks browse --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)``
 
-Step 3.8: Clean up workspace ==>
-          terraform destroy
+Step 3.8: Clean up workspace  &emsp ``terraform destroy``
 
 **Google Cloud GKE:**
 
 Prerequisites:
-1. An google cloud account
-2. kubectl (https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-3. Terraform CLI (https://learn.hashicorp.com/tutorials/terraform/install-cli)
-4. Having Kubernetes Engine API enabled.
+1. *An google cloud account*
+2. *[kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)* 
+3. *[Terraform CLI](https://learn.hashicorp.com/tutorials/terraform/install-cli)* 
+4. *Having Kubernetes Engine API enabled*
 
-Step 4.1: Change the active directory ==> 
-          cd gcp_gke
+Step 4.1: Change the active directory &emsp ``cd gcp_gke``
           
-Step 4.2: Update your variables.tf file ==>
+Step 4.2: Update your variables.tf file
           _Replace varibales in variables.tf with the appropriate values and set path for the credentials file in main.tf file
 
-Step 4.3: Initialize Terraform ==>
-          terraform init
+Step 4.3: Initialize Terraform &emsp ``terraform init``
 
-Step 4.4: Provision the GKE cluster ==>
-          terraform apply
+Step 4.4: Provision the GKE cluster &emsp ``terraform apply``
 
-Step 4.6: Inspect the cluster pods using the generated kubeconfig file ==>
-          kubectl get pods --all-namespaces --kubeconfig=kubeconfig-prod
+Step 4.6: Inspect the cluster pods using the generated kubeconfig file &emsp ``kubectl get pods --all-namespaces --kubeconfig=kubeconfig-prod``
 
-Step 4.7: Clean up workspace ==>
-          terraform destroy
+Step 4.7: Clean up workspace &emsp ``terraform destroy``
