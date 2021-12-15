@@ -48,6 +48,43 @@ def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_pr
 
 		os.chdir('..')
 
+		if directory == "aws":
+			subprocess.run("aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)")
+		elif directory == "azure":
+			result = subprocess.run(['az', 'account', 'subscription','list'], stdout=subprocess.PIPE)
+
+			result_stdout = result.stdout
+			result_json = result_stdout.decode('utf8').replace("'", '"')
+			#print(result_json)
+			
+			# Load the JSON to a Python list & dump it back out as formatted JSON
+			data = json.loads(result_json)
+			s = json.dumps(data, indent=4, sort_keys=True)
+			#print(s)
+			data1 = data[0]
+			subscription_id=data1['subscriptionId']
+			
+			subprocess.run('az', 'account', 'set', '--', 'subscription', subscription_id)
+
+			result = subprocess.run(['az', 'aks', 'list'], stdout=subprocess.PIPE)
+
+			result_stdout = result.stdout
+			result_json = result_stdout.decode('utf8').replace("'", '"')
+			#print(result_json)
+			
+			# Load the JSON to a Python list & dump it back out as formatted JSON
+			data = json.loads(result_json)
+			s = json.dumps(data, indent=4, sort_keys=True)
+			#print(s)
+			data1 = data[len(data) -1]
+			cluster_name=data1['name']
+			cluster_resource_group=data1['resourceGroup']
+
+			#print(cluster_name)
+			#print(cluster_resource_group)
+
+			subprocess.run('az', 'aks', 'get-credentials', '--resource-group', cluster_resource_group, '--name', cluster_name)
+			
 def generateApplyCommand(terraform_command_variables_and_value,st="apply"):
 	str = "terraform " + st +" --auto-approve  -lock=false "
 	for key,value in terraform_command_variables_and_value.items():
