@@ -49,10 +49,10 @@ def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_pr
 		os.chdir('..')
 
 def generateApplyCommand(terraform_command_variables_and_value,st="apply"):
-    str = "terraform " + st +" --auto-approve  -lock=false "
-    for key,value in terraform_command_variables_and_value.items():
-    	str += " -var "+key+"=\""+value+"\""
-    return str
+	str = "terraform " + st +" --auto-approve  -lock=false "
+	for key,value in terraform_command_variables_and_value.items():
+		str += " -var "+key+"=\""+value+"\""
+	return str
 
 @app.route("/aws", methods=['POST'])
 def aws_post():
@@ -113,11 +113,11 @@ def aws_post():
 		os.chdir("..")
 
 	applyCommand=generateApplyCommand(terraform_command_variables_and_value)
-	destroyCommand= generateApplyCommand(terraform_command_variables_and_value,"destroy")
+	destroyCommand=generateApplyCommand(terraform_command_variables_and_value,"destroy")
 
 	print(applyCommand,destroyCommand)
 
-	return flask.Response( show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand), mimetype= MIME_TYPE )
+	return flask.Response(show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand), mimetype=MIME_TYPE)
 
 @app.route("/azurelogin",methods=['POST'])
 def azurelogin():
