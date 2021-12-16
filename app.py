@@ -49,7 +49,7 @@ def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_pr
 		os.chdir('..')
 
 		if directory == "aws":
-			subprocess.run("aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)")
+			os.system("aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)")
 		elif directory == "azure":
 			result = subprocess.run(['az', 'account', 'subscription','list'], stdout=subprocess.PIPE)
 
@@ -64,7 +64,9 @@ def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_pr
 			data1 = data[0]
 			subscription_id=data1['subscriptionId']
 			
-			subprocess.run('az', 'account', 'set', '--', 'subscription', subscription_id)
+			set_subscription_cmd="az account set --subscription " + str(subscription_id)
+			os.system(set_subscription_cmd)
+			#subprocess.run('az', 'account', 'set', '--', 'subscription', subscription_id)
 
 			result = subprocess.run(['az', 'aks', 'list'], stdout=subprocess.PIPE)
 
@@ -82,8 +84,8 @@ def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_pr
 
 			#print(cluster_name)
 			#print(cluster_resource_group)
-
-			subprocess.run('az', 'aks', 'get-credentials', '--resource-group', cluster_resource_group, '--name', cluster_name)
+			get_name_cmd="az aks get-credentials --resource-group " + cluster_resource_group + " --name " + cluster_name
+			os.system(get_name_cmd)
 			
 def generateApplyCommand(terraform_command_variables_and_value,st="apply"):
 	str = "terraform " + st +" --auto-approve  -lock=false "
@@ -152,7 +154,7 @@ def aws_post():
 	applyCommand=generateApplyCommand(terraform_command_variables_and_value)
 	destroyCommand=generateApplyCommand(terraform_command_variables_and_value,"destroy")
 
-	print(applyCommand,destroyCommand)
+	#print(applyCommand,destroyCommand)
 
 	return flask.Response(show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand), mimetype=MIME_TYPE)
 
@@ -175,27 +177,27 @@ def azure_post():
 
 		result_stdout = result.stdout
 		result_json = result_stdout.decode('utf8').replace("'", '"')
-		print(result_json)
+		#print(result_json)
 		
 		# Load the JSON to a Python list & dump it back out as formatted JSON
 		data = json.loads(result_json)
 		s = json.dumps(data, indent=4, sort_keys=True)
-		print(s)
+		#print(s)
 
-		print(data['appId'])
-		print(data['password'])
+		#print(data['appId'])
+		#print(data['password'])
 
 		os.chdir(directory)
 		provider_file = open('terraform.tfvars', 'w')
 		str = 'appId = "' + data['appId'] + '"\n' + 'password = "' + data['password'] + '"'
-		print(str)
+		#print(str)
 		provider_file.write(str)
 		provider_file.close()
 		os.chdir('..')
 
 		applyCommand=generateApplyCommand(terraform_command_variables_and_value)
 		destroyCommand=generateApplyCommand(terraform_command_variables_and_value,"destroy")
-		print(applyCommand,destroyCommand)
+		#print(applyCommand,destroyCommand)
 
 		return flask.Response(show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand), mimetype= MIME_TYPE )
 	except:
@@ -252,7 +254,7 @@ def gcp_post():
 
 	applyCommand=generateApplyCommand(terraform_command_variables_and_value)
 	destroyCommand= generateApplyCommand(terraform_command_variables_and_value,"destroy")
-	print(applyCommand,destroyCommand)
+	#print(applyCommand,destroyCommand)
 
 	return flask.Response( show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand), mimetype= MIME_TYPE )
 
