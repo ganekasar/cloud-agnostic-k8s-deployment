@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ephemeralvolume-operator
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      application: ephemeralvolume-operator
+  template:
+    metadata:
+      labels:
+        application: ephemeralvolume-operator
+    spec:
+      serviceAccountName: ephemeralvolume-operator
+      containers:
+      - name: ephemeralvolume-operator
+        image: primedio/ephemeralvolume-operator:latest
+        imagePullPolicy: Always

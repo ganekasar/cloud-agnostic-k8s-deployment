@@ -1,0 +1,6 @@
+apiVersion: primed.io/v1
+kind: EphemeralVolumeClaim
+metadata:
+  name: my-claim
+spec:
+  size: 20G
