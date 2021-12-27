@@ -51,6 +51,16 @@ def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_pr
 		if directory == "aws":
 			os.chdir(directory)
 			os.system("aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)")
+
+			os.chdir('operator-app')
+	
+			for line in lines:
+				#print(line)
+				os.system(line)
+
+			#print('Completed Install file')
+
+			os.system('cd ..')
 		elif directory == "azure":
 			result = subprocess.run(['az', 'account', 'subscription','list'], stdout=subprocess.PIPE)
 
@@ -79,27 +89,27 @@ def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_pr
 			data = json.loads(result_json)
 			s = json.dumps(data, indent=4, sort_keys=True)
 			#print(s)
-			print(data)
+			#print(data)
 			data1 = data[0]
 			cluster_name=data1['name']
 			cluster_resource_group=data1['resourceGroup']
 
-			print(cluster_name)
-			print(cluster_resource_group)
+			#print(cluster_name)
+			#print(cluster_resource_group)
 			get_name_cmd="az aks get-credentials --resource-group " + cluster_resource_group + " --name " + cluster_name
 			os.system(get_name_cmd)
 
-			print('Almost done.. just run install file now')
+			#print('Almost done.. just run install file now')
 
 			os.chdir("azure")
 
 			os.chdir('operator-app')
 	
 			for line in lines:
-				print(line)
+				#print(line)
 				os.system(line)
 
-			print('Completed Install file')
+			#print('Completed Install file')
 
 			os.system('cd ..')
 			
@@ -116,6 +126,23 @@ def aws_post():
 	terraform_command_variables_and_value={}
 
 	lines = ""
+
+	install_file = request.files['install_file']
+	github_link = request.form['github_link']
+
+	filename = secure_filename(install_file.filename)
+	install_file.save(filename)
+
+	lines =[]
+	with open(filename) as f:
+		lines = f.readlines()
+
+	github_link = "git clone " + github_link
+
+	#print(github_link)
+	os.system('cd ..')
+	os.chdir(directory)
+	os.system(github_link)
 
 	# configures providers.tf
 	if len(request.form.getlist("AlreadyConfigured")) == 0:
@@ -202,13 +229,13 @@ def azure_post():
 
 	github_link = "git clone " + github_link
 
-	print(github_link)
+	#print(github_link)
 	os.system('cd ..')
 	os.chdir(directory)
 	os.system(github_link)
 	
 	try:
-		print('In Try')
+		#print('In Try')
 		result = subprocess.run(['az', 'ad', 'sp', 'create-for-rbac', '--skip-assignment'], stdout=subprocess.PIPE)
 
 		result_stdout = result.stdout
@@ -238,11 +265,11 @@ def azure_post():
 
 		lines = []
 
-		print('Every Thing is fine')
+		#print('Every Thing is fine')
 
 		return flask.Response(show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand, lines), mimetype= MIME_TYPE)
 	except:
-		print("Please provide azure_credentials.json")
+		print("Something went wrong")
 		return render_template('error.html')
 
 
