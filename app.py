@@ -22,7 +22,7 @@ def aws():
 def run_command(cmd_line, command):
 	cmd_line.run(command)
 
-def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_proc,terraform_destroy_proc,applyCommand,destroyCommand):
+def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_proc,terraform_destroy_proc,applyCommand,destroyCommand, install_lines):
 
 		os.chdir(directory)
 		initialize_proc.run('terraform init')
@@ -49,6 +49,7 @@ def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_pr
 		os.chdir('..')
 
 		if directory == "aws":
+			os.chdir(directory)
 			os.system("aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)")
 		elif directory == "azure":
 			result = subprocess.run(['az', 'account', 'subscription','list'], stdout=subprocess.PIPE)
@@ -78,14 +79,29 @@ def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_pr
 			data = json.loads(result_json)
 			s = json.dumps(data, indent=4, sort_keys=True)
 			#print(s)
-			data1 = data[len(data) -1]
+			print(data)
+			data1 = data[0]
 			cluster_name=data1['name']
 			cluster_resource_group=data1['resourceGroup']
 
-			#print(cluster_name)
-			#print(cluster_resource_group)
+			print(cluster_name)
+			print(cluster_resource_group)
 			get_name_cmd="az aks get-credentials --resource-group " + cluster_resource_group + " --name " + cluster_name
 			os.system(get_name_cmd)
+
+			print('Almost done.. just run install file now')
+
+			os.chdir("azure")
+
+			os.chdir('operator-app')
+	
+			for line in lines:
+				print(line)
+				os.system(line)
+
+			print('Completed Install file')
+
+			os.system('cd ..')
 			
 def generateApplyCommand(terraform_command_variables_and_value,st="apply"):
 	str = "terraform " + st +" --auto-approve  -lock=false "
@@ -98,6 +114,8 @@ def aws_post():
 	directory = "aws"
 
 	terraform_command_variables_and_value={}
+
+	lines = ""
 
 	# configures providers.tf
 	if len(request.form.getlist("AlreadyConfigured")) == 0:
@@ -156,7 +174,7 @@ def aws_post():
 
 	#print(applyCommand,destroyCommand)
 
-	return flask.Response(show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand), mimetype=MIME_TYPE)
+	return flask.Response(show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand, lines), mimetype=MIME_TYPE)
 
 @app.route("/azurelogin",methods=['POST'])
 def azurelogin():
@@ -171,8 +189,26 @@ def azure_post():
 	directory = 'azure'
 
 	terraform_command_variables_and_value={}
+
+	github_link = request.form['github_link']
+	
+	file = request.files['file']
+	filename = secure_filename(file.filename)
+	file.save(filename)
+
+	lines =[]
+	with open(filename) as f:
+		lines = f.readlines()
+
+	github_link = "git clone " + github_link
+
+	print(github_link)
+	os.system('cd ..')
+	os.chdir(directory)
+	os.system(github_link)
 	
 	try:
+		print('In Try')
 		result = subprocess.run(['az', 'ad', 'sp', 'create-for-rbac', '--skip-assignment'], stdout=subprocess.PIPE)
 
 		result_stdout = result.stdout
@@ -186,8 +222,9 @@ def azure_post():
 
 		#print(data['appId'])
 		#print(data['password'])
-
-		os.chdir(directory)
+		print('227')
+		print(subprocess.run(['pwd']))
+		print('229')
 		provider_file = open('terraform.tfvars', 'w')
 		str = 'appId = "' + data['appId'] + '"\n' + 'password = "' + data['password'] + '"'
 		#print(str)
@@ -199,7 +236,11 @@ def azure_post():
 		destroyCommand=generateApplyCommand(terraform_command_variables_and_value,"destroy")
 		#print(applyCommand,destroyCommand)
 
-		return flask.Response(show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand), mimetype= MIME_TYPE )
+		lines = []
+
+		print('Every Thing is fine')
+
+		return flask.Response(show_real_time_output(directory,proc.Group(),proc.Group(),proc.Group(),proc.Group(),applyCommand,destroyCommand, lines), mimetype= MIME_TYPE)
 	except:
 		print("Please provide azure_credentials.json")
 		return render_template('error.html')
