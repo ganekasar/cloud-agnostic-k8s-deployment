@@ -99,14 +99,17 @@ def show_real_time_output(directory,initialize_proc,terraform_apply_proc,demo_pr
 			get_name_cmd="az aks get-credentials --resource-group " + cluster_resource_group + " --name " + cluster_name
 			os.system(get_name_cmd)
 
-			#print('Almost done.. just run install file now')
+			print('Almost done.. just run install file now')
 
+			print(subprocess.run(['pwd']))
 			os.chdir("azure")
 
 			os.chdir('operator-app')
+
+			print('Working...')
 	
-			for line in lines:
-				#print(line)
+			for line in install_lines:
+				print(line)
 				os.system(line)
 
 			#print('Completed Install file')
@@ -141,6 +144,9 @@ def aws_post():
 
 	#print(github_link)
 	os.system('cd ..')
+	os.system('cd ..')
+	print('-------------')
+	print(subprocess.run(['pwd']))
 	os.chdir(directory)
 	os.system(github_link)
 
@@ -190,7 +196,9 @@ def aws_post():
 				region = "us-east-2"
 			}}
 		'''
-		os.chdir(directory)
+		print('-->')
+		print(subprocess.run(['pwd']))
+		#os.chdir(directory)
 		provider_file = open("providers.tf", "w")
 		provider_file.write(content.format(region="us-east-2"))
 		provider_file.close()
@@ -227,10 +235,13 @@ def azure_post():
 	with open(filename) as f:
 		lines = f.readlines()
 
+	print('Lines are as follow')
+	print(lines)
+
 	github_link = "git clone " + github_link
 
-	#print(github_link)
-	os.system('cd ..')
+	print(github_link)
+	#os.system('cd ..')
 	os.chdir(directory)
 	os.system(github_link)
 	
@@ -262,8 +273,6 @@ def azure_post():
 		applyCommand=generateApplyCommand(terraform_command_variables_and_value)
 		destroyCommand=generateApplyCommand(terraform_command_variables_and_value,"destroy")
 		#print(applyCommand,destroyCommand)
-
-		lines = []
 
 		#print('Every Thing is fine')
 
